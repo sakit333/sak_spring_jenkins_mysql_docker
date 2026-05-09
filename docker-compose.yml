@@ -12,10 +12,17 @@ services:
       - "3306:3306"
 
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
 
     networks:
       - springboot-mysql-network
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   springboot-app:
     build: .
@@ -25,7 +32,8 @@ services:
       - "8085:8080"
 
     depends_on:
-      - mysql-container
+      mysql-container:
+        condition: service_healthy
 
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/myapplication?createDatabaseIfNotExist=true
@@ -38,6 +46,3 @@ services:
 networks:
   springboot-mysql-network:
     name: springboot-mysql-network
-
-volumes:
-  mysql-data:

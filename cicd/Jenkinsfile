@@ -51,8 +51,11 @@ pipeline {
             steps {
                 echo "Stopping and Removing Containers..."
 
-                sh 'docker compose down -v --rmi all'
-                sh 'docker system prune -af'
+                // Keeps MySQL local data safe
+                sh 'docker compose down'
+
+                // Optional cleanup
+                sh 'docker image prune -af'
             }
         }
     }
