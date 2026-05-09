@@ -52,6 +52,7 @@ pipeline {
                 echo "Stopping and Removing Containers..."
 
                 sh 'docker compose down -v --rmi all'
+                sh 'docker system prune -af'
             }
         }
     }
